@@ -1,6 +1,7 @@
 import os
 
 from flask import Flask
+from fpnr.model import db
 
 
 def create_app(test_config=None):
@@ -13,7 +14,7 @@ def create_app(test_config=None):
         ENV='development',  # 'production'
         SECRET_KEY='dev',
         DATABASE=os.path.join(app.instance_path, 'testdb.sqlite'),
-        SQLALCHEMY_DATABASE_URI="sqlite:///test.db"
+        SQLALCHEMY_DATABASE_URI="sqlite:///{}/test.db".format(app.instance_path)
     )
 
     if test_config is None:
@@ -28,6 +29,9 @@ def create_app(test_config=None):
         os.makedirs(app.instance_path)
     except OSError:
         pass
+
+    # init db
+    db.init_app(app)
 
     # a simple page that says hello
     @app.route('/')
